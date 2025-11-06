@@ -1,0 +1,133 @@
+.authContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #5b5bf0, #3ecf8e);
+  padding: 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+.authBox {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  padding: 40px 50px;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  animation: fadeIn 0.8s ease;
+
+  h2 {
+    color: #2b2d42;
+    font-size: 1.9rem;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    color: #6c757d;
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    input {
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        border-color: #5b5bf0;
+        box-shadow: 0 0 5px rgba(91, 91, 240, 0.3);
+        outline: none;
+      }
+    }
+
+    .avatarSelection {
+      margin-top: 10px;
+
+      p {
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .avatarList {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .avatarOption {
+          width: 65px;
+          height: 65px;
+          border-radius: 50%;
+          border: 3px solid transparent;
+          cursor: pointer;
+          transition: transform 0.3s, border 0.3s;
+
+          &:hover {
+            transform: scale(1.1);
+            border-color: #5b5bf0;
+          }
+
+          &.selected {
+            border-color: #3ecf8e;
+            transform: scale(1.15);
+          }
+        }
+      }
+    }
+
+    .authButton {
+      background: #5b5bf0;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.3s ease;
+
+      &:hover {
+        background: #4848cc;
+      }
+    }
+
+    .redirectText {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #555;
+
+      span {
+        color: #5b5bf0;
+        cursor: pointer;
+        font-weight: 600;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #3ecf8e;
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

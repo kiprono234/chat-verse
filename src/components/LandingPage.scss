@@ -1,0 +1,204 @@
+.landingContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff; // Changed background to white
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 2rem;
+  padding: 4rem 6rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  width: 80%;
+  max-width: 1200px;
+  position: relative;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding: 2.5rem;
+    text-align: center;
+  }
+}
+
+.textSection {
+  flex: 1;
+  color: #141124;
+
+  .logo {
+    display: flex;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+
+    .logoIcon {
+      margin-right: 10px;
+      animation: pulse 2s infinite;
+    }
+
+    .logoText {
+      background: linear-gradient(90deg, #00b4d8, #ff00ff, #0096c7, #00ffcc);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 5s linear infinite;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    }
+  }
+
+  .headline {
+    font-size: 3.8rem;
+    line-height: 1.2;
+    font-weight: 800;
+    background: linear-gradient(90deg, #00b4d8, #ff00ff, #00ffcc, #0099ff);
+    background-size: 400%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 5s ease infinite;
+    text-shadow: 0 0 25px rgba(0, 255, 255, 0.3);
+    margin-bottom: 1.5rem;
+  }
+
+  .subheadline {
+    color: #5c587a;
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .getStarted {
+    background: linear-gradient(90deg, #00b4d8, #0099ff);
+    border: none;
+    color: #fff;
+    padding: 1.2rem 3rem;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0, 180, 216, 0.3);
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: linear-gradient(90deg, #0099ff, #00b4d8);
+      box-shadow: 0 0 30px rgba(0, 180, 216, 0.5);
+      transform: translateY(-3px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+.imageSection {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 180, 216, 0.15), transparent);
+    animation: glowRotate 6s linear infinite;
+    filter: blur(40px);
+  }
+
+  svg {
+    width: 280px;
+    height: auto;
+  }
+}
+
+/* 🌈 Futuristic Gradient Marquee */
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: #ffffff;
+  padding: 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border-top-left-radius: 2rem;
+  border-top-right-radius: 2rem;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInUp 1.2s ease-in-out;
+
+  .track {
+    display: inline-block;
+    animation: scroll 20s linear infinite;
+    background: linear-gradient(90deg, #00b4d8, #ff00ff, #00ffcc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  span {
+    padding-right: 2rem;
+  }
+}
+
+/* ✨ Animations */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes glowRotate {
+  0% { transform: rotate(0deg) translateX(0); }
+  50% { transform: rotate(180deg) translateX(20px); }
+  100% { transform: rotate(360deg) translateX(0); }
+}
+
+@keyframes scroll {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chatImage {
+  width: 100%;
+  max-width: 350px;
+  border-radius: 1.2rem;
+  box-shadow: 0 0 25px rgba(0, 180, 216, 0.25);
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Floating animation for the chat illustration */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
