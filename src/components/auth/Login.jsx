@@ -1,31 +1,39 @@
-import React, { useState, useContext } from "react";
+// src/components/auth/Login.jsx
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
 import "./Auth.scss";
 
 export default function Login() {
-  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await login(form.email, form.password);
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (
+      storedUser &&
+      storedUser.email === form.email &&
+      storedUser.password === form.password
+    ) {
+      localStorage.setItem("user", JSON.stringify(storedUser));
       navigate("/chat");
-    } catch (err) {
+    } else {
       setError("Invalid email or password");
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
+    <div className="authContainer">
+      <div className="authBox">
         <h2>Welcome Back 👋</h2>
         <p className="subtitle">Sign in to continue chatting</p>
+
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -35,6 +43,7 @@ export default function Login() {
             onChange={handleChange}
             required
           />
+
           <input
             type="password"
             name="password"
@@ -43,11 +52,15 @@ export default function Login() {
             onChange={handleChange}
             required
           />
+
           {error && <p className="error">{error}</p>}
-          <button type="submit" className="btn-primary">Login</button>
+
+          <button type="submit" className="authButton">
+            Login
+          </button>
         </form>
 
-        <div className="auth-footer">
+        <div className="authFooter">
           <p>
             Don’t have an account? <Link to="/signup">Sign up</Link>
           </p>

@@ -1,9 +1,25 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './LandingPage.scss';
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import "./LandingPage.scss";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { user, loading } = useContext(AuthContext);
+
+  const handleGetStarted = () => {
+    if (loading) return; // prevent navigating before context is ready
+
+    const storedUser = localStorage.getItem("user");
+
+    if (user) {
+      navigate("/chat");
+    } else if (storedUser) {
+      navigate("/login");
+    } else {
+      navigate("/signup");
+    }
+  };
 
   return (
     <div className="landingContainer">
@@ -22,8 +38,12 @@ export default function LandingPage() {
             Connect with your friends and colleagues in real-time.
           </p>
 
-          <button className="getStarted" onClick={() => navigate('/chat')}>
-            Get Started
+          <button
+            className="getStarted"
+            onClick={handleGetStarted}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Get Started"}
           </button>
         </div>
 
@@ -31,17 +51,9 @@ export default function LandingPage() {
           <img
             src="https://play-lh.googleusercontent.com/Aj8M9XabOBgWGibBodYraeLDCmQxpdJvreOCSAlBgxlSB0167Lv92hsps9BU1hnktcQvVZYecs1Eos36u71j"
             alt="Chat illustration"
-            className="chatImage"
           />
         </div>
       </section>
-
-      <div className="marquee">
-        <div className="track">
-          <span>🚀 Powering Conversations at Light Speed — Chat Smarter with ChatVerse 🚀</span>
-          <span>🚀 Powering Conversations at Light Speed — Chat Smarter with ChatVerse 🚀</span>
-        </div>
-      </div>
     </div>
   );
 }

@@ -4,26 +4,38 @@ import React, { createContext, useState, useEffect } from "react";
 export const AuthContext = createContext();
 
 export default function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
-  });
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Check localStorage for existing user on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser?.username) {
+          setUser(parsedUser);
+        }
+      } catch {
+        localStorage.removeItem("user"); // Remove corrupted data
+      }
+    }
+    setLoading(false);
+  }, []);
 
   const signup = async (data) => {
-    // Normally, you’d call an API here
-    setUser(data);
     localStorage.setItem("user", JSON.stringify(data));
+    setUser(data);
   };
 
   const login = async (data) => {
-    setUser(data);
     localStorage.setItem("user", JSON.stringify(data));
+    setUser(data);
   };
 
   const logout = () => {
-    setUser(null);
     localStorage.removeItem("user");
+    setUser(null);
   };
 
   return (

@@ -7,30 +7,37 @@ export default function Signup() {
     username: "",
     email: "",
     password: "",
-    avatar: "",
+    avatar: "", // will store Base64 or file URL
   });
-
-  const avatars = [
-    "/avatars/avatar1.png",
-    "/avatars/avatar2.png",
-    "/avatars/avatar3.png",
-    "/avatars/avatar4.png",
-  ];
 
   const navigate = useNavigate();
 
+  // handle text input changes
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleAvatarSelect = (avatar) =>
-    setFormData({ ...formData, avatar });
+  // handle image upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ ...formData, avatar: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password || !formData.avatar) {
-      alert("Please fill in all fields and select an avatar");
+    const { username, email, password, avatar } = formData;
+
+    if (!username || !email || !password) {
+      alert("Please fill in all fields.");
       return;
     }
+
+    // Save user data (for demo: using localStorage)
     localStorage.setItem("user", JSON.stringify(formData));
     navigate("/chat");
   };
@@ -39,7 +46,7 @@ export default function Signup() {
     <div className="authContainer">
       <div className="authBox">
         <h2>Create Your Account</h2>
-        <p className="subtitle">Join the conversation — pick your look!</p>
+        <p className="subtitle">Join the conversation — upload your photo!</p>
 
         <form onSubmit={handleSubmit}>
           <input
@@ -66,21 +73,24 @@ export default function Signup() {
             onChange={handleChange}
           />
 
-          <div className="avatarSelection">
-            <p>Select an Avatar</p>
-            <div className="avatarList">
-              {avatars.map((avatar, i) => (
+          {/* 🖼️ Image upload field */}
+          <div className="fileUploadSection">
+            <p>Upload Profile Photo</p>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+
+            {formData.avatar && (
+              <div className="imagePreview">
                 <img
-                  key={i}
-                  src={avatar}
-                  alt={`avatar-${i}`}
-                  className={`avatarOption ${
-                    formData.avatar === avatar ? "selected" : ""
-                  }`}
-                  onClick={() => handleAvatarSelect(avatar)}
+                  src={formData.avatar}
+                  alt="Profile preview"
+                  className="previewImage"
                 />
-              ))}
-            </div>
+              </div>
+            )}
           </div>
 
           <button type="submit" className="authButton">Sign Up</button>
