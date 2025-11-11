@@ -1,59 +1,54 @@
+// src/components/LandingPage.jsx
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import PageWrapper from "./PageWrapper";
 import "./LandingPage.scss";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { user, loading } = useContext(AuthContext);
+  const { loading } = useContext(AuthContext);
 
   const handleGetStarted = () => {
-    if (loading) return; // prevent navigating before context is ready
-
-    const storedUser = localStorage.getItem("user");
-
-    if (user) {
-      navigate("/chat");
-    } else if (storedUser) {
-      navigate("/login");
-    } else {
-      navigate("/signup");
-    }
+    if (loading) return;
+    navigate("/signup");
   };
 
   return (
-    <div className="landingContainer">
-      <section className="card">
-        <div className="textSection">
-          <div className="logo">
-            <span className="logoIcon">💬</span>
-            <span className="logoText">ChatVerse</span>
+    <PageWrapper>
+      <div className="landingContainer">
+        <section className="card">
+          <div className="textSection">
+            <div className="logo">
+              <span className="logoIcon">💬</span>
+              <span className="logoText">ChatVerse</span>
+            </div>
+
+            <h1 className="headline">
+              Real-time <br /> messaging <br /> web app
+            </h1>
+
+            <p className="subheadline">
+              Connect with your friends and colleagues in real-time.
+            </p>
+
+            <button
+              className="getStarted"
+              onClick={handleGetStarted}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Get Started"}
+            </button>
           </div>
 
-          <h1 className="headline">
-            Real-time <br /> messaging <br /> web app
-          </h1>
-
-          <p className="subheadline">
-            Connect with your friends and colleagues in real-time.
-          </p>
-
-          <button
-            className="getStarted"
-            onClick={handleGetStarted}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Get Started"}
-          </button>
-        </div>
-
-        <div className="imageSection">
-          <img
-            src="https://play-lh.googleusercontent.com/Aj8M9XabOBgWGibBodYraeLDCmQxpdJvreOCSAlBgxlSB0167Lv92hsps9BU1hnktcQvVZYecs1Eos36u71j"
-            alt="Chat illustration"
-          />
-        </div>
-      </section>
-    </div>
+          <div className="imageSection">
+            <img
+              src="https://play-lh.googleusercontent.com/Aj8M9XabOBgWGibBodYraeLDCmQxpdJvreOCSAlBgxlSB0167Lv92hsps9BU1hnktcQvVZYecs1Eos36u71j"
+              alt="Chat illustration"
+            />
+          </div>
+        </section>
+      </div>
+    </PageWrapper>
   );
 }

@@ -1,28 +1,32 @@
-import React, { useState } from "react";
+// src/components/auth/Signup.jsx
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Auth.scss";
+import { AuthContext } from "../../context/AuthContext";
+import "./Signup.scss";
+
 
 export default function Signup() {
+  const { signup } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
-    avatar: "", // will store Base64 or file URL
+    photo: "",
   });
 
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-  // handle text input changes
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // handle image upload
-  const handleFileChange = (e) => {
+  const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, avatar: reader.result });
+      reader.onload = (upload) => {
+        setFormData({ ...formData, photo: upload.target.result });
       };
       reader.readAsDataURL(file);
     }
@@ -30,23 +34,22 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { username, email, password, avatar } = formData;
-
-    if (!username || !email || !password) {
-      alert("Please fill in all fields.");
+    if (!formData.username || !formData.email || !formData.password || !formData.photo) {
+      setError("Please fill all fields and upload a photo!");
       return;
     }
 
-    // Save user data (for demo: using localStorage)
-    localStorage.setItem("user", JSON.stringify(formData));
+    signup(formData);
     navigate("/chat");
   };
 
   return (
-    <div className="authContainer">
-      <div className="authBox">
+    <div className="signup-container">
+      <div className="signup-card">
         <h2>Create Your Account</h2>
-        <p className="subtitle">Join the conversation — upload your photo!</p>
+        <p className="subtitle">Join the ChatVerse community 🎉</p>
+
+        {error && <p className="error">{error}</p>}
 
         <form onSubmit={handleSubmit}>
           <input
@@ -55,6 +58,7 @@ export default function Signup() {
             placeholder="Username"
             value={formData.username}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -63,6 +67,7 @@ export default function Signup() {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
+            required
           />
 
           <input
@@ -71,31 +76,25 @@ export default function Signup() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
+            required
           />
 
-          {/* 🖼️ Image upload field */}
-          <div className="fileUploadSection">
-            <p>Upload Profile Photo</p>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-            />
+          <label className="upload-label">
+            Upload Profile Photo
+            <input type="file" accept="image/*" onChange={handlePhotoUpload} />
+          </label>
 
-            {formData.avatar && (
-              <div className="imagePreview">
-                <img
-                  src={formData.avatar}
-                  alt="Profile preview"
-                  className="previewImage"
-                />
-              </div>
-            )}
-          </div>
+          {formData.photo && (
+            <div className="photo-preview">
+              <img src={formData.photo} alt="preview" />
+            </div>
+          )}
 
-          <button type="submit" className="authButton">Sign Up</button>
+          <button type="submit" className="btn-primary">
+            Sign Up
+          </button>
 
-          <p className="redirectText">
+          <p className="redirect-text">
             Already have an account?{" "}
             <span onClick={() => navigate("/login")}>Log in</span>
           </p>

@@ -183,3 +183,33 @@
     }
   }
 }
+.uploadSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 0;
+
+  .uploadLabel {
+    font-weight: 500;
+    color: #777;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .avatarPreview {
+    margin-top: 10px;
+
+    img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #00bcd4;
+      box-shadow: 0 0 8px rgba(0, 188, 212, 0.5);
+    }
+  }
+}

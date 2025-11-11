@@ -7,30 +7,25 @@ export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Check localStorage for existing user on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        if (parsedUser?.username) {
-          setUser(parsedUser);
-        }
-      } catch {
-        localStorage.removeItem("user"); // Remove corrupted data
-      }
-    }
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) setUser(storedUser);
     setLoading(false);
   }, []);
 
-  const signup = async (data) => {
-    localStorage.setItem("user", JSON.stringify(data));
-    setUser(data);
+  const signup = async (formData) => {
+    localStorage.setItem("user", JSON.stringify(formData));
+    setUser(formData);
+    return true;
   };
 
-  const login = async (data) => {
-    localStorage.setItem("user", JSON.stringify(data));
-    setUser(data);
+  const login = async (email, password) => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser && storedUser.email === email && storedUser.password === password) {
+      setUser(storedUser);
+      return true;
+    }
+    return false;
   };
 
   const logout = () => {
@@ -38,8 +33,13 @@ export default function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateUser = (updatedUser) => {
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, signup, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, loading, signup, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

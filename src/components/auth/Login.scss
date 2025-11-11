@@ -1,0 +1,92 @@
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, white, white);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+    .auth-card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+  
+      h2 {
+        margin-bottom: 10px;
+        color: #4a90e2;
+        font-size: 1.8rem;
+      }
+  
+      .subtitle {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 25px;
+      }
+  
+      form {
+        display: flex;
+        flex-direction: column;
+  
+        input {
+          padding: 12px 15px;
+          margin-bottom: 15px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          font-size: 1rem;
+          outline: none;
+          transition: border-color 0.3s, box-shadow 0.3s;
+  
+          &:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+          }
+        }
+  
+        .error {
+          color: #e74c3c;
+          font-size: 0.9rem;
+          margin-bottom: 10px;
+        }
+  
+        .btn-primary {
+          padding: 12px;
+          border: none;
+          border-radius: 8px;
+          background-color: #4a90e2;
+          color: white;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.3s, transform 0.2s;
+  
+          &:hover {
+            background-color: #357ab8;
+            transform: scale(1.03);
+          }
+        }
+  
+        .redirectText {
+          margin-top: 15px;
+          font-size: 0.9rem;
+          color: #666;
+  
+          span {
+            color: #4a90e2;
+            cursor: pointer;
+            font-weight: bold;
+            transition: color 0.3s;
+  
+            &:hover {
+              color: #357ab8;
+            }
+          }
+        }
+      }
+    }
+  }
+  
