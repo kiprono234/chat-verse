@@ -43,7 +43,7 @@ export default function LandingPage() {
 
           <div className="imageSection">
             <img
-              src="https://play-lh.googleusercontent.com/Aj8M9XabOBgWGibBodYraeLDCmQxpdJvreOCSAlBgxlSB0167Lv92hsps9BU1hnktcQvVZYecs1Eos36u71j"
+              src="https://media.istockphoto.com/id/1200899068/photo/abstract-rating-star-like-positive-feedback.jpg?s=612x612&w=0&k=20&c=vzAutEE4Ioe_tr6UfT9uJ51ZAP3tF8Wejkn8Nzb6tKE="
               alt="Chat illustration"
             />
           </div>

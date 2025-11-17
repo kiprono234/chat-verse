@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import "./Signup.scss";
 
-
 export default function Signup() {
   const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -17,6 +16,7 @@ export default function Signup() {
   });
 
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,12 +34,16 @@ export default function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
+
     if (!formData.username || !formData.email || !formData.password || !formData.photo) {
       setError("Please fill all fields and upload a photo!");
       return;
     }
 
+    setLoading(true);
     signup(formData);
+    setLoading(false);
     navigate("/chat");
   };
 
@@ -90,8 +94,8 @@ export default function Signup() {
             </div>
           )}
 
-          <button type="submit" className="btn-primary">
-            Sign Up
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? "Signing Up..." : "Sign Up"}
           </button>
 
           <p className="redirect-text">

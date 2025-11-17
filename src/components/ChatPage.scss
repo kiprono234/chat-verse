@@ -64,47 +64,16 @@
         }
       }
 
-      .logout-btn {
+      .logout-btn, .home {
         padding: 8px 12px;
         border: none;
         border-radius: 5px;
-        background-color: #e74c3c;
-        color: white;
         cursor: pointer;
         font-weight: bold;
         transition: background 0.3s;
 
         &:hover {
-          background-color: #c0392b;
-        }
-      }
-
-      /* Back to Landing button */
-      .landing-btn {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        background-color: #50e3c2;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 6px 12px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.3s, transform 0.2s;
-
-        &:hover {
-          background-color: #3ab89f;
-          transform: scale(1.05);
-        }
-
-        svg {
-          font-size: 1rem;
-          transition: transform 0.3s ease;
-        }
-
-        &:hover svg {
-          transform: rotate(-10deg) scale(1.1);
+          filter: brightness(0.9);
         }
       }
     }
@@ -120,6 +89,9 @@
       display: flex;
       margin-bottom: 15px;
       align-items: flex-start;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: popIn 0.3s forwards;
 
       &.my-message {
         flex-direction: row-reverse;
@@ -159,7 +131,32 @@
         padding: 10px 15px;
         word-wrap: break-word;
         font-size: 0.95rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s, background 0.2s;
+
+        &:hover {
+          transform: scale(1.02);
+        }
+
+        .timestamp {
+          display: block;
+          font-size: 0.7rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin-top: 5px;
+          text-align: right;
+        }
       }
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+      font-size: 0.85rem;
+      color: #555;
+      font-style: italic;
+      margin: 5px 0;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
     }
   }
 
@@ -295,13 +292,13 @@
   }
 
   @keyframes fadeChatIn {
-    from {
-      opacity: 0;
-      transform: translateY(15px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes popIn {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
   }
 }
