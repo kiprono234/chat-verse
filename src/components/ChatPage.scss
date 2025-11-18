@@ -4,15 +4,14 @@
   height: 100vh;
   background-color: #f0f2f5;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  animation: fadeChatIn 0.4s ease-in-out forwards;
 
-  /* Header */
+  /* ---------------- Header ---------------- */
   .chat-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background-color: #ffffff;
+    background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
@@ -64,7 +63,7 @@
         }
       }
 
-      .logout-btn, .home {
+      button {
         padding: 8px 12px;
         border: none;
         border-radius: 5px;
@@ -79,7 +78,7 @@
     }
   }
 
-  /* Messages */
+  /* ---------------- Messages ---------------- */
   .chat-messages {
     flex: 1;
     overflow-y: auto;
@@ -87,19 +86,18 @@
 
     .message {
       display: flex;
-      margin-bottom: 15px;
       align-items: flex-start;
-      opacity: 0;
-      transform: scale(0.95);
-      animation: popIn 0.3s forwards;
+      margin-bottom: 15px;
+      gap: 10px;
+      animation: fadeSlideIn 0.25s ease-out;
 
       &.my-message {
         flex-direction: row-reverse;
 
         .message-content {
-          background-color: #4a90e2;
-          color: white;
-          border-radius: 15px 0 15px 15px;
+          background-color: #d1f2ff;
+          color: #000;
+          border-radius: 16px 16px 0 16px;
         }
 
         .message-avatar {
@@ -109,9 +107,9 @@
 
       &.other-message {
         .message-content {
-          background-color: #e5e5ea;
-          color: black;
-          border-radius: 0 15px 15px 15px;
+          background-color: #fff;
+          color: #000;
+          border-radius: 16px 16px 16px 0;
         }
 
         .message-avatar {
@@ -120,53 +118,120 @@
       }
 
       .message-avatar {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         object-fit: cover;
       }
 
       .message-content {
         max-width: 70%;
-        padding: 10px 15px;
-        word-wrap: break-word;
-        font-size: 0.95rem;
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
         position: relative;
-        overflow: hidden;
-        transition: transform 0.2s, background 0.2s;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        word-wrap: break-word;
 
-        &:hover {
-          transform: scale(1.02);
+        p {
+          margin: 0;
         }
 
         .timestamp {
-          display: block;
-          font-size: 0.7rem;
-          color: rgba(255, 255, 255, 0.7);
-          margin-top: 5px;
-          text-align: right;
+          font-size: 0.75rem;
+          opacity: 0.6;
+          margin-top: 4px;
+          align-self: flex-end;
+        }
+
+        /* File link */
+        a.file-download {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 10px;
+          background: #f3f3f3;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          font-weight: 500;
+          text-decoration: none;
+          word-break: break-all;
+          transition: background 0.2s ease;
+
+          &:hover {
+            background: #e5e5e5;
+          }
+
+          &::before {
+            content: "📎";
+            font-size: 1.1rem;
+          }
+        }
+
+        /* Image preview */
+        .image-container {
+          position: relative;
+          display: inline-block;
+
+          img.chat-image {
+            max-width: 250px;
+            max-height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+
+            &:hover {
+              transform: scale(1.02);
+            }
+          }
+
+          .download-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+
+            &:hover {
+              background: rgba(0, 0, 0, 0.8);
+            }
+          }
+
+          &:hover .download-btn {
+            opacity: 1;
+          }
         }
       }
     }
 
-    /* Typing indicator */
     .typing-indicator {
       font-size: 0.85rem;
-      color: #555;
+      color: #666;
       font-style: italic;
       margin: 5px 0;
-      opacity: 0;
-      animation: fadeIn 0.5s forwards;
     }
   }
 
-  /* Input Area */
+  /* ---------------- Input ---------------- */
   .chat-input {
     display: flex;
     align-items: center;
     padding: 10px 20px;
-    background-color: #ffffff;
+    background-color: #fff;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
 
     input[type="text"] {
       flex: 1;
@@ -193,9 +258,50 @@
         transform: scale(1.2);
       }
     }
+
+    .file-preview {
+      margin-right: 10px;
+
+      img {
+        max-width: 100px;
+        max-height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+    }
+
+    .emoji-picker {
+      position: absolute;
+      bottom: 60px;
+      left: 20px;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      z-index: 10;
+
+      .emoji-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 5px;
+      }
+
+      .emoji-item {
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background 0.2s;
+
+        &:hover {
+          background: #f0f0f0;
+        }
+      }
+    }
   }
 
-  /* Profile Modal */
+  /* ---------------- Profile Modal ---------------- */
   .profile-modal {
     position: fixed;
     top: 0;
@@ -206,17 +312,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: fadeIn 0.3s ease forwards;
     z-index: 20;
 
     .modal-content {
-      background: white;
+      background: #fff;
       border-radius: 10px;
       padding: 25px;
       width: 400px;
       max-width: 90%;
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      animation: slideUp 0.3s ease forwards;
 
       h2 {
         margin-top: 0;
@@ -260,7 +364,7 @@
 
           &:first-child {
             background-color: #4a90e2;
-            color: white;
+            color: #fff;
 
             &:hover {
               background-color: #357ab8;
@@ -269,7 +373,7 @@
 
           &:last-child {
             background-color: #ccc;
-            color: black;
+            color: #000;
 
             &:hover {
               background-color: #999;
@@ -280,25 +384,10 @@
     }
   }
 
-  /* Animations */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  @keyframes fadeChatIn {
-    from { opacity: 0; transform: translateY(15px); }
+  /* ---------------- Animations ---------------- */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
-  @keyframes popIn {
-    0% { opacity: 0; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.05); }
-    100% { opacity: 1; transform: scale(1); }
-  }
 }
+

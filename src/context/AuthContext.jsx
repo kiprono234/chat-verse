@@ -1,5 +1,6 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from "react";
+import { signup as apiSignup, login as apiLogin } from "../api/auth";
 
 export const AuthContext = createContext();
 
@@ -8,33 +9,45 @@ export default function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
+    const storedUser = JSON.parse(localStorage.getItem("chatverse_user"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
     setLoading(false);
   }, []);
 
   const signup = async (formData) => {
-    localStorage.setItem("user", JSON.stringify(formData));
-    setUser(formData);
-    return true;
+    console.log("Signup attempt with data:", formData);
+    try {
+      const result = await apiSignup({ name: formData.username, email: formData.email, password: formData.password });
+      console.log("Signup result:", result);
+      setUser(result.user);
+      return true;
+    } catch (error) {
+      console.error("Signup error:", error);
+      return false;
+    }
   };
 
   const login = async (email, password) => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser.email === email && storedUser.password === password) {
-      setUser(storedUser);
+    try {
+      const result = await apiLogin({ email, password });
+      console.log("Login result:", result);
+      setUser(result.user);
       return true;
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("chatverse_user");
     setUser(null);
   };
 
   const updateUser = (updatedUser) => {
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+    localStorage.setItem("chatverse_user", JSON.stringify(updatedUser));
     setUser(updatedUser);
   };
 

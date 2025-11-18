@@ -8,13 +8,14 @@ export async function me() {
   
   export async function login({ email, password }) {
     // simple mock: accept any credentials
-    const user = { name: "Test User", email };
+    const existing = JSON.parse(localStorage.getItem("chatverse_user") || "null");
+    const user = existing && existing.email === email ? existing : { username: "Test User", email };
     localStorage.setItem("chatverse_user", JSON.stringify(user));
     return { user };
   }
   
-  export async function signup({ name, email, password }) {
-    const user = { name, email };
+  export async function signup({ name, email, password, photo }) {
+    const user = { username: name, email, photo };
     localStorage.setItem("chatverse_user", JSON.stringify(user));
     return { user };
   }

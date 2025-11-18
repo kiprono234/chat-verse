@@ -5,6 +5,7 @@ import { AuthContext } from "../../context/AuthContext";
 import "./Signup.scss";
 
 export default function Signup() {
+  console.log("Signup component rendered");
   const { signup } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -32,19 +33,28 @@ export default function Signup() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    console.log("handleSubmit called");
     e.preventDefault();
     setError("");
+    console.log("Form data before validation:", formData);
 
-    if (!formData.username || !formData.email || !formData.password || !formData.photo) {
-      setError("Please fill all fields and upload a photo!");
+    if (!formData.username || !formData.email || !formData.password) {
+      console.log("Validation failed: missing fields");
+      setError("Please fill all fields!");
       return;
     }
 
+    console.log("Validation passed, calling signup");
     setLoading(true);
-    signup(formData);
+    const success = await signup(formData);
+    console.log("Signup result:", success);
     setLoading(false);
-    navigate("/chat");
+    if (success) {
+      navigate("/chat");
+    } else {
+      setError("Signup failed. Please try again.");
+    }
   };
 
   return (
