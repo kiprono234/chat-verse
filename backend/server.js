@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "./models/User.js";
+import Message from "./models/Message.js";
 import mongoose from "mongoose";
 
 // Fix __dirname because ES Modules don't provide it
@@ -118,6 +119,18 @@ app.post("/login", async (req, res) => {
 });
 
 
+// === Messages API ===
+app.get("/messages", async (req, res) => {
+  try {
+    const messages = await Message.find().sort({ timestamp: -1 }).limit(100);
+    console.log(`[DEBUG] Fetched ${messages.length} messages from database`);
+    res.json(messages.reverse()); // Reverse to oldest first
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // === Socket.IO Chat ===
 let activeUsers = [];
 
@@ -138,11 +151,20 @@ io.on("connection", (socket) => {
   });
 
   // Sending messages
-  socket.on("sendMessage", (msgData) => {
+  socket.on("sendMessage", async (msgData) => {
     const messageWithTime = {
       ...msgData,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
     };
+
+    // Save to database
+    try {
+      const newMessage = new Message(messageWithTime);
+      await newMessage.save();
+      console.log(`[DEBUG] Message saved to database: ${messageWithTime.sender} - ${messageWithTime.text || 'file'}`);
+    } catch (error) {
+      console.error("Error saving message:", error);
+    }
 
     io.emit("receiveMessage", messageWithTime);
   });

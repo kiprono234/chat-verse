@@ -1,0 +1,150 @@
+.marquee-wrapper {
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    background-color: #1e1e2f;
+    padding: 12px 0;
+    position: relative;
+  }
+  
+  .marquee-message {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    animation: fadeInOut 3s ease-in-out forwards;
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translateY(20%);
+    }
+    10% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+    90% {
+      opacity: 1;
+      transform: translateY(0%);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-20%);
+    }
+  }
+  .marquee-wrapper {
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    background-color: #1e1e2f;
+    padding: 12px 0;
+    position: relative;
+    min-height: 2rem;
+  }
+  
+  .marquee-message {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    position: absolute;
+    width: 100%;
+    left: 0;
+  }
+  
+  .fade-in {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+  
+  .fade-out {
+    opacity: 0;
+    transform: translateY(-20%);
+  }
+  .imageSection {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .vertical-marquee {
+    position: absolute;
+    right: -180px; // adjust distance from the image
+    top: 0;
+    height: 200px; // adjust based on image height
+    width: 220px; // marquee width
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: linear-gradient(to bottom, rgba(30,30,47,0.8) 0%, transparent 20%, transparent 80%, rgba(30,30,47,0.8) 100%);
+    border-radius: 12px;
+    padding: 10px;
+  }
+  
+  .marquee-content {
+    display: flex;
+    flex-direction: column;
+    animation: scrollMarquee 10s linear infinite;
+  }
+  
+  .marquee-item {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    margin: 8px 0;
+  }
+  
+  @keyframes scrollMarquee {
+    0% {
+      transform: translateY(0%);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+  .horizontal-marquee {
+    overflow: hidden;
+    width: 100%;
+    margin: 20px 0;
+    position: relative;
+    height: 30px; // adjust height of the marquee
+  }
+  
+  .marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: slideMarquee 15s linear infinite;
+  }
+  
+  .marquee-item {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ff6600;
+    margin-right: 60px; // spacing between messages
+    opacity: 0;
+    animation: fadeInOut 15s linear infinite;
+  }
+  
+  /* Horizontal slide animation */
+  @keyframes slideMarquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  /* Individual fade in/out for each message */
+  @keyframes fadeInOut {
+    0%, 10%, 90%, 100% { opacity: 0; }
+    20%, 80% { opacity: 1; }
+  }
+  

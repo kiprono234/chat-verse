@@ -10,20 +10,24 @@ import {
   FaHome,
   FaDownload,
   FaSmile,
+  FaTrash,
+  FaArchive,
 } from "react-icons/fa";
 import PageWrapper from "./PageWrapper";
 import io from "socket.io-client";
 import "./ChatPage.scss";
 
+// Backend endpoints
 const SOCKET_URL = "http://localhost:5000";
 const UPLOAD_URL = "http://localhost:5000/upload";
+const MESSAGES_URL = "http://localhost:5000/messages";
 
 export default function ChatPage() {
   const { user, updateUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // --- State ---
   const [messages, setMessages] = useState([]);
-  const [activeUsers, setActiveUsers] = useState([]);
   const [input, setInput] = useState("");
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -31,20 +35,39 @@ export default function ChatPage() {
   const [showProfileEditor, setShowProfileEditor] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
+  // --- Refs ---
   const fileInputRef = useRef();
   const socketRef = useRef();
   const chatContainerRef = useRef();
-  const resizeObserverRef = useRef();
   const scrollTimeoutRef = useRef();
 
+  // ---------------- FETCH MESSAGES ----------------
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch(MESSAGES_URL);
+        const data = await res.json();
+        setMessages(data);
+        localStorage.setItem("messages", JSON.stringify(data)); // Save messages to localStorage
+      } catch (err) {
+        console.error("Error fetching messages:", err);
+      }
+    };
 
+    const savedMessages = localStorage.getItem("messages");
+    if (savedMessages) {
+      setMessages(JSON.parse(savedMessages)); // Load messages from localStorage
+    } else {
+      fetchMessages();
+    }
+  }, []);
+
+  // ---------------- SOCKET CONNECTION ----------------
   useEffect(() => {
     const socket = io(SOCKET_URL, { transports: ["websocket"] });
     socketRef.current = socket;
 
     socket.emit("newUser", user);
-
-    socket.on("activeUsers", (users) => setActiveUsers(users));
 
     socket.on("receiveMessage", (msg) => {
       setMessages((prev) => [...prev, msg]);
@@ -61,42 +84,21 @@ export default function ChatPage() {
     return () => socket.disconnect();
   }, [user]);
 
-  useEffect(() => {
-    if (!chatContainerRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      console.log("ResizeObserver triggered", entries.length, "entries");
-      entries.forEach((entry) => {
-        console.log("Resize:", entry.contentRect);
-      });
-    });
-    observer.observe(chatContainerRef.current);
-    resizeObserverRef.current = observer;
-
-    return () => observer.disconnect();
-  }, []);
-
-    const scrollToBottomSafe = () => {
+  // ---------------- SAFE SCROLL ----------------
+  const scrollToBottomSafe = () => {
     try {
       const container = chatContainerRef.current;
       if (!container) return;
-      console.log("Setting scrollTop to", container.scrollHeight);
-      // Debounce with requestAnimationFrame to prevent ResizeObserver loops
       requestAnimationFrame(() => {
         if (container) container.scrollTop = container.scrollHeight;
       });
     } catch (err) {
-      console.log("Error in scrollToBottomSafe:", err);
       // ignore ResizeObserver warnings
     }
   };
 
-  // Scroll after new messages, images, or files are added
   useEffect(() => {
-    console.log("useEffect triggered for scrolling, messages length:", messages.length);
     if (!chatContainerRef.current) return;
-
-    // Clear any pending scroll
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
 
     const container = chatContainerRef.current;
@@ -107,37 +109,28 @@ export default function ChatPage() {
       scrollTimeoutRef.current = setTimeout(() => {
         scrollToBottomSafe();
         scrollTimeoutRef.current = null;
-      }, 100); // Debounce delay
+      }, 50);
     };
 
     if (imgs.length === 0) {
-      console.log("No images, scrolling immediately");
       triggerScroll();
       return;
     }
 
-    console.log("Waiting for", imgs.length, "images to load");
     imgs.forEach((img) => {
       if (img.complete) {
         loaded++;
-        if (loaded === imgs.length) {
-          console.log("All images already loaded, scrolling");
-          triggerScroll();
-        }
+        if (loaded === imgs.length) triggerScroll();
       } else {
         img.onload = () => {
           loaded++;
-          console.log("Image loaded, loaded count:", loaded);
-          if (loaded === imgs.length) {
-            console.log("All images loaded, scrolling");
-            triggerScroll();
-          }
+          if (loaded === imgs.length) triggerScroll();
         };
       }
     });
   }, [messages]);
 
-  
+  // ---------------- SEND MESSAGE ----------------
   const handleSend = async () => {
     if (!input.trim() && !file) return;
 
@@ -147,7 +140,6 @@ export default function ChatPage() {
     if (file) {
       const formData = new FormData();
       formData.append("file", file);
-
       try {
         const res = await fetch(UPLOAD_URL, { method: "POST", body: formData });
         const data = await res.json();
@@ -166,17 +158,32 @@ export default function ChatPage() {
       file: fileUrl,
       fileType,
       timestamp: new Date().toISOString(),
+      archived: false,
     };
 
-    socketRef.current.emit("sendMessage", msgData);
-    setMessages((prev) => [...prev, msgData]);
+    // --- Save to backend ---
+    try {
+      await fetch(MESSAGES_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(msgData),
+      });
+    } catch (err) {
+      console.error("Failed to save message to backend:", err);
+    }
 
+    // --- Emit to socket ---
+    socketRef.current.emit("sendMessage", msgData);
+
+    // --- Update local state ---
+    setMessages((prev) => [...prev, msgData]);
     setInput("");
     setFile(null);
     setPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  // ---------------- TYPING ----------------
   const handleTyping = (e) => {
     setInput(e.target.value);
     socketRef.current.emit("typing", {
@@ -185,12 +192,12 @@ export default function ChatPage() {
     });
   };
 
-    const handleFileSelect = (e) => {
+  // ---------------- FILE SELECTION ----------------
+  const handleFileSelect = (e) => {
     const selected = e.target.files[0];
     if (!selected) return;
 
     setFile(selected);
-
     if (selected.type.startsWith("image/")) {
       setPreview(URL.createObjectURL(selected));
     } else {
@@ -199,15 +206,19 @@ export default function ChatPage() {
   };
 
   const isImage = (type) => type && type.startsWith("image/");
+  const insertEmoji = (emoji) => setInput((prev) => prev + emoji);
 
-  const insertEmoji = (emoji) => {
-    setInput((prev) => prev + emoji);
-    setShowEmojiPicker(false);
+  const handleDeleteMessage = (index) => {
+    setMessages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // -------------------------------------------------------------------
-  // RENDER
-  // -------------------------------------------------------------------
+  const handleArchiveMessage = (index) => {
+    setMessages((prev) =>
+      prev.map((msg, i) => (i === index ? { ...msg, archived: true } : msg))
+    );
+  };
+
+  // ---------------- RENDER ----------------
   return (
     <PageWrapper>
       <div className="chat-container">
@@ -222,7 +233,6 @@ export default function ChatPage() {
               </span>
             </div>
           </div>
-
           <div className="chat-actions">
             <button onClick={() => navigate("/")} className="landing-btn">
               <FaHome /> Landing
@@ -239,7 +249,7 @@ export default function ChatPage() {
 
         {/* MESSAGES */}
         <div className="chat-messages" ref={chatContainerRef}>
-          {messages.map((msg, idx) => (
+          {messages.filter((msg) => !msg.archived).map((msg, idx) => (
             <div
               key={idx}
               className={`message ${
@@ -252,12 +262,14 @@ export default function ChatPage() {
 
                 {msg.file && isImage(msg.fileType) && (
                   <div className="image-container">
-                    <img src={msg.file} className="chat-image" alt="upload" />
+                    <img src={msg.file} alt="upload" className="chat-image" />
                     <a
                       href={msg.file}
                       download={msg.file.split("/").pop()}
                       className="download-btn"
-                      title="Download image"
+                      title="Download file"
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
                       <FaDownload />
                     </a>
@@ -267,8 +279,9 @@ export default function ChatPage() {
                 {msg.file && !isImage(msg.fileType) && (
                   <a
                     href={msg.file}
-                    className="file-download"
                     download={msg.file.split("/").pop()}
+                    className="file-download"
+                    target="_blank"
                     rel="noopener noreferrer"
                   >
                     📎 {msg.file.split("/").pop()}
@@ -281,9 +294,43 @@ export default function ChatPage() {
                     minute: "2-digit",
                   })}
                 </span>
+
+                <div className="message-actions">
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteMessage(idx)}
+                  >
+                    <FaTrash />
+                  </button>
+                  <button
+                    className="archive-btn"
+                    onClick={() => handleArchiveMessage(idx)}
+                  >
+                    <FaArchive />
+                  </button>
+                </div>
               </div>
             </div>
           ))}
+
+          {/* ARCHIVED MESSAGES */}
+          {messages.some((msg) => msg.archived) && (
+            <div className="archived-section">
+              <h4>Archived Messages</h4>
+              {messages
+                .filter((msg) => msg.archived)
+                .map((msg, idx) => (
+                  <div key={idx} className="message archived">
+                    {msg.text && <p>{msg.text}</p>}
+                    {msg.file && (
+                      <a href={msg.file} download>
+                        {msg.file.split("/").pop()}
+                      </a>
+                    )}
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
 
         {/* TYPING INDICATOR */}
@@ -326,11 +373,13 @@ export default function ChatPage() {
           {showEmojiPicker && (
             <div className="emoji-picker">
               <div className="emoji-grid">
-                {["😀", "😂", "😊", "😍", "🥰", "😘", "😉", "😎", "🤔", "😢", "😭", "😤", "😡", "👍", "👎", "👌", "✌️", "🤞", "👏", "🙌", "🤝", "🙏", "💪", "❤️", "💔", "💯", "🔥", "⭐", "✨", "🎉", "🎊"].map((emoji) => (
+                {[
+                  "😀","😂","😊","😍","🥰","😘","😉","😎","🤔","😢","😭","😤","😡","👍","👎","👌","✌️","🤞","👏","🙌","🤝","🙏","💪","❤️","💔","💯","🔥","⭐","✨","🎉","🎊"
+                ].map((emoji) => (
                   <span
                     key={emoji}
-                    onClick={() => insertEmoji(emoji)}
                     className="emoji-item"
+                    onClick={() => insertEmoji(emoji)}
                   >
                     {emoji}
                   </span>

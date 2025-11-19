@@ -1,27 +1,43 @@
 // src/components/AnimatedRoutes.jsx
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useContext } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+import { AuthContext } from "../context/AuthContext";
 
-// Import all pages/components as default exports
+// Pages (default exports)
+import LandingPage from "./LandingPage";
+import Signup from "./auth/Signup";
+import Login from "./auth/Login";
 import ChatPage from "./ChatPage";
-import HomePage from "./HomePage";
-import LoginPage from "./LoginPage";
-import NotFoundPage from "./NotFoundPage";
+
+function RequireAuth({ children }) {
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) return <div className="loading">Loading...</div>;
+  if (!user) return <Navigate to="/login" replace />;
+
+  return children;
+}
 
 export default function AnimatedRoutes() {
+  const location = useLocation();
+
   return (
-    <Routes>
-      {/* Landing/Home page */}
-      <Route path="/" element={<HomePage />} />
-
-      {/* Chat page */}
-      <Route path="/chat" element={<ChatPage />} />
-
-      {/* Login page */}
-      <Route path="/login" element={<LoginPage />} />
-
-      {/* Redirect unknown routes to 404 */}
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/chat"
+          element={
+            <RequireAuth>
+              <ChatPage />
+            </RequireAuth>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </AnimatePresence>
   );
 }

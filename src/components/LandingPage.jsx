@@ -28,6 +28,14 @@ export default function LandingPage() {
               Real-time <br /> messaging <br /> web app
             </h1>
 
+            <div className="vertical-marquee">
+              <div className="marquee-content">
+                <span className="marquee-item">Welcome to ChatVerse!</span>
+                <span className="marquee-item">Connect with your friends in real-time!</span>
+                <span className="marquee-item">Experience seamless communication!</span>
+              </div>
+            </div>
+
             <p className="subheadline">
               Connect with your friends and colleagues in real-time.
             </p>
@@ -44,7 +52,6 @@ export default function LandingPage() {
           <div className="imageSection">
             <img
               src="https://plus.unsplash.com/premium_photo-1683133755831-f868acb68202?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mjl8fGNvbW11bmljYXRpb258ZW58MHx8MHx8fDA%3D"
-              
               alt="Chat illustration"
             />
           </div>
